@@ -52,8 +52,7 @@ void addUser()
     scanf("%d", &user.age);
     clearBuffer();
 
-    fprintf(file, "%d,%s,%d\n",
-            user.id, user.name, user.age);
+    fprintf(file, "%d,%s,%d\n",user.id, user.name, user.age);
 
     fclose(file);
 
@@ -72,13 +71,11 @@ void readUsers()
         return;
     }
 
-    printf("\n--- User Records ---\n");
+    printf("\n   User Records   \n");
 
-    while (fscanf(file, "%d,%49[^,],%d",
-                  &user.id, user.name, &user.age) == 3)
+    while (fscanf(file, "%d,%49[^,],%d",&user.id, user.name, &user.age) == 3)
     {
-        printf("ID: %d | Name: %s | Age: %d\n",
-               user.id, user.name, user.age);
+        printf("ID: %d | Name: %s | Age: %d\n",user.id, user.name, user.age);
 
         found = 1;
     }
@@ -117,8 +114,7 @@ void updateUser()
     scanf("%d", &id);
     clearBuffer();
 
-    while (fscanf(file, "%d,%49[^,],%d",
-                  &user.id, user.name, &user.age) == 3)
+    while (fscanf(file, "%d,%49[^,],%d",&user.id, user.name, &user.age) == 3)
     {
         if (user.id == id)
         {
@@ -133,8 +129,7 @@ void updateUser()
             clearBuffer();
         }
 
-        fprintf(temp, "%d,%s,%d\n",
-                user.id, user.name, user.age);
+        fprintf(temp, "%d,%s,%d\n",user.id, user.name, user.age);
     }
 
     fclose(file);
@@ -179,8 +174,7 @@ void deleteUser()
     scanf("%d", &id);
     clearBuffer();
 
-    while (fscanf(file, "%d,%49[^,],%d",
-                  &user.id, user.name, &user.age) == 3)
+    while (fscanf(file, "%d,%49[^,],%d",&user.id, user.name, &user.age) == 3)
     {
         if (user.id == id)
         {
@@ -188,8 +182,7 @@ void deleteUser()
             continue;
         }
 
-        fprintf(temp, "%d,%s,%d\n",
-                user.id, user.name, user.age);
+        fprintf(temp, "%d,%s,%d\n",user.id, user.name, user.age);
     }
 
     fclose(file);
@@ -216,7 +209,7 @@ int main()
 
     while (1)
     {
-        printf("\n===== User Management =====\n");
+        printf("\n   User Management   \n");
         printf("1. Add User\n");
         printf("2. Read Users\n");
         printf("3. Update User\n");
