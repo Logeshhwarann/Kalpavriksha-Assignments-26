@@ -1,89 +1,102 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#define MAX_SIZE 100
-
-int calculate(char expression[], int *result);
+#define SIZE 100
 
 int main()
 {
-    char expression[MAX_SIZE];
-    int result;
-
-    printf("Enter expression: ");
-    fgets(expression, MAX_SIZE, stdin);
-
-    if (calculate(expression, &result) == 0)
-    {
-        printf("%d\n", result);
-    }
-
-    return 0;
-}
-
-int calculate(char expression[], int *result)
-{
-    int currentNumber = 0;
-    int previousNumber = 0;
-    int total = 0;
+    char expression[SIZE];
+    int result = 0;
+    int lastNumber = 0;
+    int number = 0;
     char operation = '+';
     int i = 0;
+    int expectingNumber = 1;
+
+    fgets(expression, SIZE, stdin);
 
     while (expression[i] != '\0' && expression[i] != '\n')
     {
-        if (isspace(expression[i]))
+        if (isspace((unsigned char)expression[i]))
         {
             i++;
             continue;
         }
 
-        if (isdigit(expression[i]))
+        if (isdigit((unsigned char)expression[i]))
         {
-            currentNumber = 0;
-
-            while (isdigit(expression[i]))
+            if (!expectingNumber)
             {
-                currentNumber = currentNumber * 10
-                               + (expression[i] - '0');
+                printf("Error: Invalid expression.\n");
+                return 0;
+            }
+
+            number = 0;
+
+            while (isdigit((unsigned char)expression[i]))
+            {
+                number = number * 10 + (expression[i] - '0');
                 i++;
             }
 
             if (operation == '+')
             {
-                total += previousNumber;
-                previousNumber = currentNumber;
+                result += lastNumber;
+                lastNumber = number;
             }
             else if (operation == '-')
             {
-                total += previousNumber;
-                previousNumber = -currentNumber;
+                result += lastNumber;
+                lastNumber = -number;
             }
             else if (operation == '*')
             {
-                previousNumber = previousNumber * currentNumber;
+                lastNumber *= number;
             }
             else if (operation == '/')
             {
-                previousNumber = previousNumber / currentNumber;
+                if (number == 0)
+                {
+                    printf("Error: Division by zero.\n");
+                    return 0;
+                }
+
+                lastNumber /= number;
             }
+
+            expectingNumber = 0;
         }
         else if (expression[i] == '+' ||
                  expression[i] == '-' ||
                  expression[i] == '*' ||
                  expression[i] == '/')
         {
+            if (expectingNumber)
+            {
+                printf("Error: Invalid expression.\n");
+                return 0;
+            }
+
             operation = expression[i];
+            expectingNumber = 1;
             i++;
         }
         else
         {
             printf("Error: Invalid expression.\n");
-            return 1;
+            return 0;
         }
     }
 
-    total += previousNumber;
-    *result = total;
+    if (expectingNumber)
+    {
+        printf("Error: Invalid expression.\n");
+        return 0;
+    }
+
+    result += lastNumber;
+
+    printf("%d\n", result);
 
     return 0;
-}
+}33
