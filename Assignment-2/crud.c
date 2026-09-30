@@ -72,7 +72,7 @@ void readUsers()
         return;
     }
 
-    printf("\n Users \n");
+    printf("\n--- User Records ---\n");
 
     while (fscanf(file, "%d,%49[^,],%d",
                   &user.id, user.name, &user.age) == 3)
@@ -91,6 +91,123 @@ void readUsers()
     fclose(file);
 }
 
+void updateUser()
+{
+    FILE *file = fopen("users.txt", "r");
+    FILE *temp = fopen("temp.txt", "w");
+
+    struct User user;
+    int id;
+    int found = 0;
+
+    if (file == NULL || temp == NULL)
+    {
+        printf("Error opening file.\n");
+
+        if (file != NULL)
+            fclose(file);
+
+        if (temp != NULL)
+            fclose(temp);
+
+        return;
+    }
+
+    printf("Enter ID to update: ");
+    scanf("%d", &id);
+    clearBuffer();
+
+    while (fscanf(file, "%d,%49[^,],%d",
+                  &user.id, user.name, &user.age) == 3)
+    {
+        if (user.id == id)
+        {
+            found = 1;
+
+            printf("Enter new name: ");
+            scanf("%49s", user.name);
+            clearBuffer();
+
+            printf("Enter new age: ");
+            scanf("%d", &user.age);
+            clearBuffer();
+        }
+
+        fprintf(temp, "%d,%s,%d\n",
+                user.id, user.name, user.age);
+    }
+
+    fclose(file);
+    fclose(temp);
+
+    if (found == 0)
+    {
+        printf("User with ID %d not found.\n", id);
+        remove("temp.txt");
+        return;
+    }
+
+    remove("users.txt");
+    rename("temp.txt", "users.txt");
+
+    printf("User updated successfully.\n");
+}
+
+void deleteUser()
+{
+    FILE *file = fopen("users.txt", "r");
+    FILE *temp = fopen("temp.txt", "w");
+
+    struct User user;
+    int id;
+    int found = 0;
+
+    if (file == NULL || temp == NULL)
+    {
+        printf("Error opening file.\n");
+
+        if (file != NULL)
+            fclose(file);
+
+        if (temp != NULL)
+            fclose(temp);
+
+        return;
+    }
+
+    printf("Enter ID to delete: ");
+    scanf("%d", &id);
+    clearBuffer();
+
+    while (fscanf(file, "%d,%49[^,],%d",
+                  &user.id, user.name, &user.age) == 3)
+    {
+        if (user.id == id)
+        {
+            found = 1;
+            continue;
+        }
+
+        fprintf(temp, "%d,%s,%d\n",
+                user.id, user.name, user.age);
+    }
+
+    fclose(file);
+    fclose(temp);
+
+    if (found == 0)
+    {
+        printf("User with ID %d not found.\n", id);
+        remove("temp.txt");
+        return;
+    }
+
+    remove("users.txt");
+    rename("temp.txt", "users.txt");
+
+    printf("User deleted successfully.\n");
+}
+
 int main()
 {
     int choice;
@@ -99,10 +216,12 @@ int main()
 
     while (1)
     {
-        printf("\n  User Management  \n");
+        printf("\n===== User Management =====\n");
         printf("1. Add User\n");
         printf("2. Read Users\n");
-        printf("3. Exit\n");
+        printf("3. Update User\n");
+        printf("4. Delete User\n");
+        printf("5. Exit\n");
 
         printf("Enter choice: ");
 
@@ -126,6 +245,14 @@ int main()
                 break;
 
             case 3:
+                updateUser();
+                break;
+
+            case 4:
+                deleteUser();
+                break;
+
+            case 5:
                 printf("Program ended.\n");
                 return 0;
 
