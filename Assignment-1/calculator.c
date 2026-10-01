@@ -1,29 +1,33 @@
 #include <stdio.h>
 #include <ctype.h>
-
 #define SIZE 100
 
 int main()
 {
     char expression[SIZE];
-    int result = 0;
-    int lastNumber = 0;
-    int number = 0;
+
+    long long result = 0;
+    long long lastNumber = 0;
+    long long currentNumber = 0;
+
     char operation = '+';
-    int i = 0;
+
+    int position = 0;
+
     int expectingNumber = 1;
 
     fgets(expression, SIZE, stdin);
 
-    while (expression[i] != '\0' && expression[i] != '\n')
+    while (expression[position] != '\0' &&
+           expression[position] != '\n')
     {
-        if (isspace((unsigned char)expression[i]))
+        if (isspace((unsigned char)expression[position]))
         {
-            i++;
+            position++;
             continue;
         }
 
-        if (isdigit((unsigned char)expression[i]))
+        if (isdigit((unsigned char)expression[position]))
         {
             if (!expectingNumber)
             {
@@ -31,45 +35,45 @@ int main()
                 return 0;
             }
 
-            number = 0;
+            currentNumber = 0;
 
-            while (isdigit((unsigned char)expression[i]))
+            while (isdigit((unsigned char)expression[position]))
             {
-                number = number * 10 + (expression[i] - '0');
-                i++;
+                currentNumber = currentNumber * 10 +(expression[position] - '0');
+                position++;
             }
 
             if (operation == '+')
             {
                 result += lastNumber;
-                lastNumber = number;
+                lastNumber = currentNumber;
             }
             else if (operation == '-')
             {
                 result += lastNumber;
-                lastNumber = -number;
+                lastNumber = -currentNumber;
             }
             else if (operation == '*')
             {
-                lastNumber *= number;
+                lastNumber *= currentNumber;
             }
             else if (operation == '/')
             {
-                if (number == 0)
+                if (currentNumber == 0)
                 {
                     printf("Error: Division by zero.\n");
                     return 0;
                 }
 
-                lastNumber /= number;
+                lastNumber /= currentNumber;
             }
 
             expectingNumber = 0;
         }
-        else if (expression[i] == '+' ||
-                 expression[i] == '-' ||
-                 expression[i] == '*' ||
-                 expression[i] == '/')
+        else if (expression[position] == '+' ||
+                 expression[position] == '-' ||
+                 expression[position] == '*' ||
+                 expression[position] == '/')
         {
             if (expectingNumber)
             {
@@ -77,9 +81,9 @@ int main()
                 return 0;
             }
 
-            operation = expression[i];
+            operation = expression[position];
             expectingNumber = 1;
-            i++;
+            position++;
         }
         else
         {
@@ -96,7 +100,11 @@ int main()
 
     result += lastNumber;
 
-    printf("%d\n", result);
+    printf("%lld\n", result);
 
     return 0;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 95bfe14 (fix: calculator review comments)
