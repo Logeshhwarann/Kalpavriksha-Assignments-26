@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <ctype.h>
 
 struct User
 {
@@ -9,11 +10,26 @@ struct User
 
 void clearBuffer()
 {
-    int ch;
+    int inputCharacter;
 
-    while ((ch = getchar()) != '\n' && ch != EOF)
+    while ((inputCharacter = getchar()) != '\n' &&inputCharacter != EOF)
     {
     }
+}
+
+int validName(char name[])
+{
+    int position = 0;
+
+    while (name[position] != '\0')
+    {
+        if (!isalpha((unsigned char)name[position]))
+            return 0;
+
+        position++;
+    }
+
+    return 1;
 }
 
 void createFile()
@@ -40,19 +56,60 @@ void addUser()
         return;
     }
 
-    printf("Enter ID: ");
-    scanf("%d", &user.id);
-    clearBuffer();
+    while (1)
+    {
+        printf("Enter ID: ");
 
-    printf("Enter Name: ");
-    scanf("%49s", user.name);
-    clearBuffer();
+        if (scanf("%d", &user.id) != 1)
+        {
+            printf("Invalid ID.\n");
+            clearBuffer();
+            continue;
+        }
 
-    printf("Enter Age: ");
-    scanf("%d", &user.age);
-    clearBuffer();
+        clearBuffer();
 
-    fprintf(file, "%d,%s,%d\n",user.id, user.name, user.age);
+        if (user.id <= 0)
+        {
+            printf("ID must be positive.\n");
+            continue;
+        }
+
+        break;
+    }
+
+    while (1)
+    {
+        printf("Enter Name: ");
+        scanf("%49s", user.name);
+        clearBuffer();
+
+        if (validName(user.name))
+            break;
+
+        printf("Invalid name. Enter letters only.\n");
+    }
+
+    while (1)
+    {
+        printf("Enter Age: ");
+
+        if (scanf("%d", &user.age) != 1)
+        {
+            printf("Invalid age.\n");
+            clearBuffer();
+            continue;
+        }
+
+        clearBuffer();
+
+        if (user.age >= 0)
+            break;
+
+        printf("Age cannot be negative.\n");
+    }
+
+    fprintf(file, "%d,%s,%d\n", user.id, user.name, user.age);
 
     fclose(file);
 
@@ -111,7 +168,17 @@ void updateUser()
     }
 
     printf("Enter ID to update: ");
-    scanf("%d", &id);
+
+    if (scanf("%d", &id) != 1)
+    {
+        printf("Invalid ID.\n");
+        clearBuffer();
+        fclose(file);
+        fclose(temp);
+        remove("temp.txt");
+        return;
+    }
+
     clearBuffer();
 
     while (fscanf(file, "%d,%49[^,],%d",&user.id, user.name, &user.age) == 3)
@@ -120,13 +187,36 @@ void updateUser()
         {
             found = 1;
 
-            printf("Enter new name: ");
-            scanf("%49s", user.name);
-            clearBuffer();
+            while (1)
+            {
+                printf("Enter new name: ");
+                scanf("%49s", user.name);
+                clearBuffer();
 
-            printf("Enter new age: ");
-            scanf("%d", &user.age);
-            clearBuffer();
+                if (validName(user.name))
+                    break;
+
+                printf("Invalid name. Enter letters only.\n");
+            }
+
+            while (1)
+            {
+                printf("Enter new age: ");
+
+                if (scanf("%d", &user.age) != 1)
+                {
+                    printf("Invalid age.\n");
+                    clearBuffer();
+                    continue;
+                }
+
+                clearBuffer();
+
+                if (user.age >= 0)
+                    break;
+
+                printf("Age cannot be negative.\n");
+            }
         }
 
         fprintf(temp, "%d,%s,%d\n",user.id, user.name, user.age);
@@ -171,7 +261,17 @@ void deleteUser()
     }
 
     printf("Enter ID to delete: ");
-    scanf("%d", &id);
+
+    if (scanf("%d", &id) != 1)
+    {
+        printf("Invalid ID.\n");
+        clearBuffer();
+        fclose(file);
+        fclose(temp);
+        remove("temp.txt");
+        return;
+    }
+
     clearBuffer();
 
     while (fscanf(file, "%d,%49[^,],%d",&user.id, user.name, &user.age) == 3)
