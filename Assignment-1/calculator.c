@@ -103,8 +103,4 @@ int main()
     printf("%lld\n", result);
 
     return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 95bfe14 (fix: calculator review comments)
