@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -6,6 +5,16 @@
 #define STANDARD 150
 #define PREMIUM 250
 #define RECLINER 400
+
+float calculate_subtotal(float ticket_price, int tickets)
+{
+    return ticket_price * tickets;
+}
+
+float calculate_discount(float subtotal)
+{
+    return subtotal * 0.1;
+}
 
 int main(void)
 {
@@ -15,14 +24,12 @@ int main(void)
     float subtotal, discount, final_bill;
     int name_position;
 
-    // Read and validate customer name
     if (fgets(name, sizeof(name), stdin) == NULL)
     {
         printf("Error: Invalid Input.\n");
         return 0;
     }
 
-    // Remove the newline character from the name
     name_position = 0;
 
     while (name[name_position] != '\0')
@@ -42,7 +49,6 @@ int main(void)
         return 0;
     }
 
-    // name validation
     for (name_position = 0; name[name_position] != '\0'; name_position++)
     {
         if (!isalpha(name[name_position]))
@@ -52,14 +58,12 @@ int main(void)
         }
     }
 
-    // ticket count validation
     if (scanf("%d", &tickets) != 1 || tickets < 1 || tickets > 20)
     {
         printf("Error: Invalid Ticket Count.\n");
         return 0;
     }
 
-    // read and validate category
     if (scanf("%d", &choice) != 1)
     {
         printf("Error: Invalid Category.\n");
@@ -88,23 +92,19 @@ int main(void)
             return 0;
     }
 
-    // subtotal
-    subtotal = price * tickets;
+    subtotal = calculate_subtotal(price, tickets);
 
-    // discount 
     if (tickets >= 5)
     {
-        discount = subtotal * 10 / 100;
+        discount = calculate_discount(subtotal);
     }
     else
     {
         discount = 0;
     }
 
-    // bill
     final_bill = subtotal - discount;
 
-    // booking details
     printf("Customer: %s\n", name);
     printf("Ticket Category: %s\n", category);
     printf("Tickets: %d\n", tickets);
