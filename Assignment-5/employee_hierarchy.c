@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -9,7 +8,6 @@
 #define MAX_EMPLOYEES 100
 #define NAME_SIZE 100
 
-// Designation levels
 #define CEO 1
 #define DIRECTOR 2
 #define MANAGER 3
@@ -27,7 +25,6 @@ const char *designations[] = {
     "Junior Developer"
 };
 
-// Employee structure
 struct Employee
 {
     int id;
@@ -41,10 +38,8 @@ struct Employee
     int active;
 };
 
-// Store all employees
 struct Employee employees[MAX_EMPLOYEES];
 
-// Read an integer safely   
 int readinteger(const char *message, int *value)
 {
     char input[100];
@@ -91,7 +86,6 @@ int readinteger(const char *message, int *value)
     return 1;
 }
 
-// Read and validate an employee name
 int readname(char name[])
 {
     printf("Enter employee name: ");
@@ -135,7 +129,6 @@ int readname(char name[])
     return 1;
 }
 
-// Find an employee by ID
 struct Employee *findEmployee(int id)
 {
     for (int i = 0; i < MAX_EMPLOYEES; i++)
@@ -147,7 +140,6 @@ struct Employee *findEmployee(int id)
     return NULL;
 }
 
-// Find an available array slot
 struct Employee *findFreeSlot(void)
 {
     for (int i = 0; i < MAX_EMPLOYEES; i++)
@@ -159,7 +151,6 @@ struct Employee *findFreeSlot(void)
     return NULL;
 }
 
-// Check whether a CEO already exists
 int ceoexists(void)
 {
     for (int i = 0; i < MAX_EMPLOYEES; i++)
@@ -172,7 +163,6 @@ int ceoexists(void)
     return 0;
 }
 
-// Check for circular reporting
 int wouldcreatecycle(struct Employee *employee,
                      struct Employee *manager)
 {
@@ -187,7 +177,6 @@ int wouldcreatecycle(struct Employee *employee,
     return 0;
 }
 
-// Add an employee to the manager's report list
 int addreport(struct Employee *manager,
               struct Employee *employee)
 {
@@ -201,7 +190,6 @@ int addreport(struct Employee *manager,
     return 1;
 }
 
-// Remove an employee from the manager's report list
 void removereport(struct Employee *manager,
                   struct Employee *employee)
 {
@@ -221,7 +209,6 @@ void removereport(struct Employee *manager,
     }
 }
 
-// Add a new employee
 void addemployee(void)
 {
     int id, managerId, choice;
@@ -280,17 +267,12 @@ void addemployee(void)
 
     struct Employee *manager = NULL;
 
-    /* CEO cannot have a manager */
     if (choice == CEO && managerId != 0)
     {
         printf("CEO cannot have a manager.\n");
         return;
     }
 
-    /*
-       Manager ID 0 means the employee is top-level.
-       This is allowed for non-CEO employees too.
-    */
     if (managerId != 0)
     {
         manager = findEmployee(managerId);
@@ -301,7 +283,6 @@ void addemployee(void)
             return;
         }
 
-        /* Manager must be more senior than the employee */
         if (manager->designation >= choice)
         {
             printf("Manager must have a higher designation.\n");
@@ -321,7 +302,6 @@ void addemployee(void)
         }
     }
 
-    // Store employee details
     slot->id = id;
     strcpy(slot->name, name);
     slot->designation = choice;
@@ -329,14 +309,12 @@ void addemployee(void)
     slot->reportCount = 0;
     slot->active = 1;
 
-    // Link employee to manager when a manager exists
     if (manager != NULL)
         addreport(manager, slot);
 
     printf("Employee added successfully.\n");
 }
 
-// Remove an employee and transfer their reports
 void removeemployee(void)
 {
     int id;
@@ -360,13 +338,8 @@ void removeemployee(void)
 
     struct Employee *manager = employee->manager;
 
-    // Remove employee from the manager's report list
     removereport(manager, employee);
 
-    /*
-       Transfer direct reports to the removed employee's manager.
-       If there is no manager, their reports become top-level.
-    */
     for (int i = 0; i < employee->reportCount; i++)
     {
         struct Employee *child = employee->reports[i];
@@ -384,7 +357,6 @@ void removeemployee(void)
     printf("Employee removed successfully.\n");
 }
 
-// Recursively display an employee and their reports
 void displayHierarchy(struct Employee *employee, int level)
 {
     if (employee == NULL || !employee->active)
@@ -402,7 +374,6 @@ void displayHierarchy(struct Employee *employee, int level)
         displayHierarchy(employee->reports[i], level + 1);
 }
 
-// Recursively count direct and indirect reports
 int countunder(struct Employee *employee)
 {
     if (employee == NULL || !employee->active)
@@ -416,7 +387,6 @@ int countunder(struct Employee *employee)
     return count;
 }
 
-// Display one employee's hierarchy
 void displayemployeehierarchy(void)
 {
     int id;
@@ -440,17 +410,12 @@ void displayemployeehierarchy(void)
            id, countunder(employee));
 }
 
-// Display the complete organization
 void displaycompletehierarchy(void)
 {
     int total = 0;
 
     printf("\n===== ORGANIZATION HIERARCHY =====\n");
 
-    /*
-       Display every top-level employee.
-       A top-level employee has no manager.
-    */
     for (int i = 0; i < MAX_EMPLOYEES; i++)
     {
         if (employees[i].active &&
@@ -467,7 +432,6 @@ void displaycompletehierarchy(void)
     printf("Total employees: %d\n", total);
 }
 
-// Main menu
 int main(void)
 {
     int choice;
